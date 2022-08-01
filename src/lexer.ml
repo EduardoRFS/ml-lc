@@ -9,6 +9,7 @@ let variable = [%sedlex.regexp? (alphabet | '_'), Star (alphabet | digit | '_')]
 let rec tokenizer buf =
   match%sedlex buf with
   | whitespace -> tokenizer buf
+  | Plus digit -> INT (int_of_string (lexeme buf))
   | "lambda" -> LAMBDA
   | "->" -> ARROW
   | ":" -> COLON

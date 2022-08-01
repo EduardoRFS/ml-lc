@@ -12,7 +12,7 @@ let () = print_expr "(id id)"
 
 type env = (var * value) list
 
-and value = Closure of { env : env; param : var; body : expr }
+and value = Closure of { env : env; param : var; body : expr } | Int of int
 [@@deriving show { with_path = false }]
 
 let rec interp env expr =
@@ -22,13 +22,16 @@ let rec interp env expr =
       | Some value -> value
       | None -> failwith "unknown variables")
   | E_lambda (param, _typ, body) -> Closure { env; param; body }
-  | E_apply (lambda, arg) ->
+  | E_apply (lambda, arg) -> (
       let lambda = interp env lambda in
       let arg = interp env arg in
 
-      let (Closure { env; param; body }) = lambda in
-      let env = (param, arg) :: env in
-      interp env body
+      match lambda with
+      | Closure { env; param; body } ->
+          let env = (param, arg) :: env in
+          interp env body
+      | Int _int -> failwith "TypeError")
+  | E_int int -> Int int
 
 let print_value expr =
   let expr = parse_expr expr in
@@ -36,3 +39,4 @@ let print_value expr =
   Format.printf "%a\n%!" pp_value value
 
 let () = print_value "(lambda [(x: int)] x)"
+let () = print_value "(lambda [(x: int)] 1)"

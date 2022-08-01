@@ -2,6 +2,7 @@
 open Ltree
 %}
 %token <string> VAR (* x *)
+%token <int> INT (* 1 *)
 %token LAMBDA (* lambda *)
 %token ARROW (* -> *)
 %token COLON (* : *)
@@ -30,11 +31,15 @@ let expr ==
 
 let expr_atom ==
   | expr_var
+  | expr_int
   | expr_parens
 
 let expr_var :=
   | var = VAR;
     { E_var var }
+let expr_int :=
+  | int = INT;
+    { E_int int }
 let expr_lambda :=
   | LAMBDA; LBRACKET; params = nonempty_list(param); RBRACKET; body = expr_atom;
     { List.fold_right (fun (param, typ) body -> E_lambda (param, typ, body) ) params body }
