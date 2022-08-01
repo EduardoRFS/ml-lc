@@ -1,4 +1,8 @@
-type var = string [@@deriving show { with_path = false }]
+type var = string
 
-type expr = E_var of var | E_lambda of var * expr | E_apply of expr * expr
-[@@deriving show { with_path = false }]
+and expr =
+  | E_var of var
+  | E_lambda of var * typ * expr
+  | E_apply of expr * expr
+
+and typ = T_int | T_arrow of typ * typ [@@deriving show { with_path = false }]

@@ -10,6 +10,8 @@ let rec tokenizer buf =
   match%sedlex buf with
   | whitespace -> tokenizer buf
   | "lambda" -> LAMBDA
+  | "->" -> ARROW
+  | ":" -> COLON
   | "(" -> LPARENS
   | ")" -> RPARENS
   | "[" -> LBRACKET

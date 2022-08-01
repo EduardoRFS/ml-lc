@@ -7,7 +7,7 @@ let print_expr expr =
   Format.printf "%a\n%!" Ltree.pp_expr expr
 
 let () = print_expr "x"
-let () = print_expr "(lambda [x] x)"
+let () = print_expr "(lambda [(x: int)] x)"
 let () = print_expr "(id id)"
 
 type env = (var * value) list
@@ -21,7 +21,7 @@ let rec interp env expr =
       match List.assoc_opt var env with
       | Some value -> value
       | None -> failwith "unknown variables")
-  | E_lambda (param, body) -> Closure { env; param; body }
+  | E_lambda (param, _typ, body) -> Closure { env; param; body }
   | E_apply (lambda, arg) ->
       let lambda = interp env lambda in
       let arg = interp env arg in
@@ -35,7 +35,4 @@ let print_value expr =
   let value = interp [] expr in
   Format.printf "%a\n%!" pp_value value
 
-let () = print_value "(lambda [id] (id id)) (lambda [x] x)"
-
-(* let <pat1> = <expr1> in <expr2> *)
-(* (fun <pat1> -> <expr2>) <expr1>*)
+let () = print_value "(lambda [(x: int)] x)"
